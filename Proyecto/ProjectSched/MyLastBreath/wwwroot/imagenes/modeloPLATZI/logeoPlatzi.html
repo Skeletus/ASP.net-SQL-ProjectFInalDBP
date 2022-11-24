@@ -1,0 +1,445 @@
+<!DOCTYPE html><html lang="es" data-cast-api-enabled="true"><head><meta charset="utf-8" /><title>Log in | Platzi</title><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /><link rel="canonical" href="https://platzi.com/login/" /><meta name="referrer" content="no-referrer-when-downgrade"><meta name="description" content="Aquí puedes ingresar como estudiante de  utilizando tus cuentas de Twitter y Facebook. Tranquilo: valoramos tu privacidad como si fuera la nuestra."><meta name="theme-color" content="#15210B" /><link rel="shortcut icon" href="//static.platzi.com/media/favicons/platzi_favicon.png" /><link rel="icon" sizes="192x192" href="//static.platzi.com/media/favicons/platzi_favicon.png"><link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/monokai.min.css"><link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-svg-core@1.2.35/styles.css" rel="stylesheet" /><meta property="fb:app_id" content="263680607075199" /><meta property="og:description" content=" Aquí puedes ingresar como estudiante de  utilizando tus cuentas de Twitter y Facebook. Tranquilo: valoramos tu privacidad como si fuera la nuestra." /><meta property="og:title" content="Log in | Platzi" /><meta property="og:type" content="website" /><meta property="og:url" content="https://https://platzi.com/login/" /><meta property="og:image" content="https://static.platzi.com/media/meta_tags/og/OG-platzi-Dic-2019.png" /><meta property="og:image:alt" content="Platzi: Cursos online profesionales de tecnología" /><meta property="og:site_name" content="Platzi" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="@Platzi" /><meta name="twitter:title" content="Log in | Platzi" /><meta name="twitter:description" content=" Aquí puedes ingresar como estudiante de  utilizando tus cuentas de Twitter y Facebook. Tranquilo: valoramos tu privacidad como si fuera la nuestra." /><meta name="twitter:creator" content="@Platzi" /><meta name="twitter:image:src" content="https://static.platzi.com/media/meta_tags/og/OG-platzi-Dic-2019.png" /><meta name="twitter:domain" content="platzi.com" /><link rel="manifest" href="/webpush.json" /><style>
+  .notifications {
+    display: none;
+  }
+
+  .notifications--active {
+    display: block;
+    position: fixed;
+    z-index: 99;
+    right: 1rem;
+    top: 4rem;
+    width: 90%;
+    max-width: 480px;
+  }
+
+  .notifications--active .notifications-item {
+    display: flex;
+    position: relative;
+    align-items: center;
+    margin: 1rem 0;
+    padding: 0.5rem 1.5rem 0.5rem 0.5rem;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #232426;
+    text-decoration: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+  }
+
+  .notifications--active .notifications-close {
+    position: absolute;
+    z-index: 100;
+    top: 0.5rem;
+    right: 0.5rem;
+    border: 0;
+    background: none;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .notifications--active .notifications-image {
+    margin-right: 0.5rem;
+  }
+
+  .notifications--active .notifications-image img {
+    height: 50px;
+  }
+</style><script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-messaging.js"></script><script>
+  window.onload = function() {
+    const WEBPUSH_COOKIE = 'webpush_token';
+    const hasNotificationsEnabled = Notification.permission === 'granted';
+    const checkCookie = document.cookie.split(';').some(item => item.trim().startsWith(`${WEBPUSH_COOKIE}=`));
+    const getAuthCookie = document.cookie.replace(/(?:(?:^|.*;\s*)csrftoken\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+    const getWebPushCookie = document.cookie.replace(/(?:(?:^|.*;\s*)webpush_token\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+    const isLogged = window.header.isLogged;
+    const browserToken = getWebPushCookie ? getWebPushCookie.slice(1, getWebPushCookie.length) : '';
+    const hasProfile = getWebPushCookie ? Boolean(Number(getWebPushCookie.charAt(0))) : false;
+    const userLogged = checkCookie && isLogged;
+    const apiUrl = '/api/iterable/register-webpush/';
+    const apiCredentials = '/api/v3/users/credentials/';
+
+    const initializeFirebaseCM = async () => {
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        firebase.initializeApp(data.firebaseConfig);
+
+        return firebase.messaging();
+      } catch (error) {
+        throw new Error(`GET ${apiUrl} ${error}`);
+      }
+    };
+
+    const registerBrowserToken = async token => {
+      try {
+        await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getAuthCookie,
+          },
+          body: JSON.stringify({
+            token,
+          }),
+        });
+      } catch (error) {
+        throw new Error(`POST ${apiUrl} ${error}`);
+      }
+    };
+
+    const trackNotificationClick = async payload => {
+      try {
+        const resIterableUserId = await fetch(apiUrl);
+        const dataUser = await resIterableUserId.json();
+
+        if (dataUser.iterableUserId !== '0') {
+          const response = await fetch(apiCredentials);
+          const credentials = await response.json();
+
+          const data = credentials.token;
+          const sifApi = `${data.microservices.sif_url}api/v1/tracking/`;
+
+          const properties = {
+            title: payload.notification.title,
+            template_id: payload.data.templateId,
+            campaign_id: payload.data.campaignId,
+            message_id: payload.data.messageId,
+            iterable_user_id: dataUser.iterableUserId,
+          };
+
+          await fetch(sifApi, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${data.access}`,
+              ...data.headers,
+            },
+            body: JSON.stringify({
+              source: 'web',
+              event: 'webpush_click',
+              properties,
+            }),
+          });
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
+    };
+
+    const closeNotification = event => {
+      event.preventDefault();
+
+      event.target.parentNode.remove();
+    };
+
+    const showNotification = async () => {
+      try {
+        const messaging = await initializeFirebaseCM();
+        const vapidKey = messaging.vapidKey;
+        const token = await messaging.getToken({ vapidKey });
+
+        if (token === browserToken) {
+          messaging.onMessage(payload => {
+            trackMessageReceived(payload);
+            buildUi(payload.notification, payload);
+          });
+        } else {
+          registerBrowserToken(token);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const buildUi = ({ title, body, icon, click_action }, payload) => {
+      const wrapper = document.querySelector('.notifications');
+      const container = document.createElement('a');
+      const btnClose = document.createElement('button');
+      const imageContainer = document.createElement('figure');
+      const image = document.createElement('img');
+      const content = document.createElement('div');
+      const heading = document.createElement('h3');
+      const text = document.createElement('p');
+
+      wrapper.classList.add('notifications--active');
+      container.classList.add('notifications-item');
+      btnClose.classList.add('notifications-close');
+      imageContainer.classList.add('notifications-image');
+      content.classList.add('notifications-content');
+      heading.classList.add('notifications-title');
+      text.classList.add('notifications-text');
+
+      container.setAttribute('href', click_action);
+      container.setAttribute('target', '_blank');
+      container.addEventListener('click', () => trackNotificationClick(payload));
+
+      btnClose.setAttribute('type', 'button');
+      btnClose.addEventListener('click', closeNotification);
+
+      image.setAttribute('src', icon);
+      image.setAttribute('alt', `Icon notification ${title}`);
+
+      btnClose.textContent = 'X';
+      heading.textContent = title;
+      text.textContent = body;
+
+      imageContainer.appendChild(image);
+      content.appendChild(heading);
+      content.appendChild(text);
+
+      container.appendChild(btnClose);
+      container.appendChild(imageContainer);
+      container.appendChild(content);
+
+      wrapper.prepend(container);
+    };
+
+    const trackMessageReceived = async payload => {
+      try {
+        const response = await fetch(apiCredentials);
+        const credentials = await response.json();
+        const data = credentials.token;
+        const sifApi = `${data.microservices.sif_url}api/v1/tracking/`;
+        const properties = {
+          title: payload.notification.title,
+          template_id: payload.data.templateId,
+          campaign_id: payload.data.campaignId,
+          message_id: payload.data.messageId,
+        };
+
+        await fetch(sifApi, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${data.access}`,
+            ...data.headers,
+          },
+          body: JSON.stringify({
+            source: 'web',
+            event: 'webpush_received',
+            properties,
+          }),
+        });
+      } catch (error) {
+        throw new Error(error);
+      }
+    };
+
+    const getBrowserToken = async () => {
+      try {
+        const messaging = await initializeFirebaseCM();
+        const vapidKey = messaging.vapidKey;
+        const token = await messaging.getToken({ vapidKey });
+
+        messaging.onMessage(payload => {
+          trackMessageReceived(payload);
+          buildUi(payload.notification, payload);
+        });
+
+        registerBrowserToken(token);
+      } catch (error) {
+        throw new Error(error);
+      }
+    };
+
+    if (!hasNotificationsEnabled || !checkCookie) {
+      getBrowserToken();
+    }
+
+    if (userLogged && !hasProfile) {
+      registerBrowserToken(browserToken);
+    }
+
+    if (hasNotificationsEnabled && checkCookie) {
+      showNotification();
+    }
+  };
+</script><div class="notifications"></div><script defer async>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+
+        
+
+        
+          // Create Trackers
+          ga('create', 'UA-76863-18', 'auto', 'platziPublicES');
+          ga('create', 'UA-76863-27', 'auto', 'platziFull');
+
+
+          // Require Plugins for platziPublicES
+          ga('platziPublicES.require', 'ecommerce');
+          ga('platziPublicES.require', 'outboundLinkTracker');
+          ga('platziPublicES.require', 'socialWidgetTracker');
+
+          // Require Plugins for platziFull
+          ga('platziFull.require', 'ecommerce');
+          ga('platziFull.require', 'outboundLinkTracker');
+          ga('platziFull.require', 'socialWidgetTracker');
+
+
+          // If userId, update userId
+          
+
+          //Send Pageview
+          ga('platziPublicES.send', 'pageview');
+          ga('platziFull.send', 'pageview');
+
+          ga('platziPublicES.set', 'dimension2', 'anonymous');
+          ga('platziFull.set', 'dimension2', 'anonymous');
+        
+
+        
+
+        
+      </script><script async src="https://www.googletagmanager.com/gtag/js?id=AW-759649979"></script><script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'AW-759649979');
+      </script><script async src="https://cdnjs.cloudflare.com/ajax/libs/autotrack/2.4.1/autotrack.js" defer async></script><script defer>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MPT6TFW');</script><script defer async>
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '1545967215651797');
+            fbq('track', 'PageView');
+            
+        </script><noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1545967215651797&ev=PageView&noscript=1" /></noscript><script type="text/javascript">_linkedin_data_partner_id = "274754";</script><script type="text/javascript" defer async>
+          (function(){var s = document.getElementsByTagName("script")[0];
+          var b = document.createElement("script");
+          b.type = "text/javascript";b.async = true;
+          b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+          s.parentNode.insertBefore(b, s);})();
+        </script><noscript><img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=274754&fmt=gif" /></noscript><script>
+      !function(w,d){if(!w.rdt){var p=w.rdt=function(){p.sendEvent?p.sendEvent.apply(p,arguments):p.callQueue.push(arguments)};p.callQueue=[];var t=d.createElement("script");t.src="https://www.redditstatic.com/ads/pixel.js",t.async=!0;var s=d.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}}(window,document);rdt('init','t2_3b2gfq1n');rdt('track', 'PageVisit');
+      </script><script defer async>
+        !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+        },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='//static.ads-twitter.com/uwt.js',
+            a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+        // Insert Twitter Pixel ID and Standard Event data below
+        twq('init','nyfpx');
+        twq('track','PageView');
+      </script><script defer async>
+        (function(h,o,t,j,a,r){
+          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+          h._hjSettings={hjid:430680,hjsv:5};
+          a=o.getElementsByTagName('head')[0];
+          r=o.createElement('script');r.async=1;
+          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+          a.appendChild(r);
+        })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+      </script><link type="text/css" href="https://static.platzi.com/static/css/core/header-v2.5038f7626025b0742b19.css.gz" rel="stylesheet" /><link type="text/css" href="https://static.platzi.com/static/css/d/contact-modal.00cad76e508f4e9b9927.css.gz" rel="stylesheet" /><link type="text/css" href="https://static.platzi.com/static/css/core/login-v2.5038f7626025b0742b19.css.gz" rel="stylesheet" /><script type="text/javascript">
+        window.header = {"live": {"active": true, "time": "2022-10-03T22:00:00+00:00", "url": "/live/octubre_bienvenida/", "title": "\u00bfC\u00f3mo cumplir mis metas con Platzi?", "badge": "https://static.platzi.com/media/achievements/lwlctura-cbd08581-6f1f-457f-b087-1016e2ee4c63.png"}, "menuItems": [{"name": "Cursos", "url": "/cursos/"}, {"name": "Blog", "url": "/blog/"}, {"name": "Comunidad", "url": "/comunidad/"}, {"name": "Agenda", "url": "/agenda/"}, {"name": "TV", "url": "/live/"}, {"name": "Planes", "url": "/precios/"}, {"name": "Cont\u00e1ctanos", "url": "", "type": "contact"}], "loggedMenu": [{"name": "Empleos", "icon": "icon-suitecase_B", "url": "/empleos/"}, {"name": "Obt\u00e9n 1 mes gratis", "icon": "icon-gift_A", "type": "referal", "url": "/mi-suscripcion/referidos/"}, {"name": "Mi Suscripci\u00f3n", "icon": "icon-platzi", "type": "my_subscription", "url": "/mi-suscripcion/"}], "enableSearch": true, "enableSubscription": true, "isLogged": false, "messages": {"contactus_title": "\u00bfTienes dudas o quieres comunicarte con nosotros?", "contactus_subtitle": "Elige el medio que m\u00e1s te convenga, te sugerimos ", "write": "Escr\u00edbenos", "dm": "Mensaje Directo", "telephone": "Tel\u00e9fono", "continue_watching": "Continua viendo", "all_courses": "Ver todos mis cursos", "username": "\u00a1Hola, {user_name}!", "subscriptionTime": "Tienes {subscriptionDays} de tu Plan", "view_profile": "Ver mi Perfil", "logout": "Cerrar sesi\u00f3n", "login": "Iniciar sesi\u00f3n", "live_in": "En Vivo", "live": "live", "menu": "Men\u00fa", "view_plans": "Quiero saber m\u00e1s", "courses": "Cursos", "more_results": "M\u00e1s resultados", "careers": "Carreras", "header.search.learningPath": "Ruta de aprendizaje", "header.search.seeAllResults": "Ver todos los resultados", "header.search.learningPaths": "Rutas de aprendizaje", "header.search.whatToLearn": "\u00bfQu\u00e9 quieres aprender?", "no_results": "No tenemos resultados destacados", "avanced_search": "Presiona ENTER para una busqueda avanzada", "init_plan": "Iniciar mi plan", "init_plan2": "Planes", "switch_language": "Do you want to switch to Platzi in English?", "switch_english": "Yes, switch to English", "user_login": "Iniciar sesi\u00f3n o crea tu cuenta", "nextPage": "Siguiente", "searchPlaceholder": "Buscar en Platzi", "login_live_text": "Participa en sesiones en vivo y foros de Platzi", "login_courses_text": "Accede a m\u00e1s de 120 cursos", "login_opportunities": "Accede a mejores oportunidades laborales", "mark_as_read": "Marcar todas como le\u00eddas", "title": "Tus notificaciones", "hide": "Ocultar", "hide_description": "Ocultar esta notificaci\u00f3n del historial", "undo": "Deshacer", "notification_hidden": "Se ocult\u00f3 la notificati\u00f3n.", "notification_empty_title": "\u00a1A\u00fan no tienes notificaciones!", "notification_emtpy_subtitle": "Participa, comparte y discute para empezar a recibir notificaciones", "see_all": "Ver todas", "notifications_disabled_title": "\u00a1Tus notificaciones est\u00e1n desactivadas!", "notification_not_available_title": "\u00a1Lo sentimos!", "notifications_not_available_subtitle": "El contenido al que intentas acceder no se encuentra disponible.", "notifications_disabled_subtitle": "Para recibir nuevamente tus notificaciones debes activarlas en <span class=\"icon-cog\"></span>", "required_courses": "Cursos Obrigat\u00f3rios", "awardsText": "Reconocidos y premiados por", "CertifiersText": "Certificadores oficiales en tecnolog\u00edas", "fromLatam": "De LATAM con ", "toTheWorld": "para el mundo", "FooterShareLink": "Comparte este link y por cada registro con esta URL te damos un mes", "FooterCopyLink": "ingrese un link", "qualityEducation": "Transformamos la econom\u00eda de nuestros pa\u00edses entrenando a la pr\u00f3xima generaci\u00f3n de profesionales en tecnolog\u00eda.", "FooterfollowUs": "Aprende en nuestras redes:", "FooterChangeLang": "Cambiar idioma", "SubscribeSectionTitle": "Ent\u00e9rate de todas las novedades en educaci\u00f3n, negocios y tecnolog\u00eda", "SubscribeSectionCTA": "Suscr\u00edbete", "YourEmail": "Correo electr\u00f3nico", "EnterYourEmail": "Ingresa tu correo electr\u00f3nico", "LoginSocial-facebook-login": "Iniciar sesi\u00f3n con Facebook", "LoginSocial-twitter-login": "Iniciar sesi\u00f3n con Twitter", "LoginSocial-google-login": "Iniciar sesi\u00f3n con Google", "login_email": "Tu email", "login_password": "Tu contrase\u00f1a", "LoginWithEmail-login": "Iniciar sesi\u00f3n", "LoginWithEmail-lostpassword": "\u00bfOlvidaste tu contrase\u00f1a?", "AccountFooter-title-register": "\u00bfA\u00fan no tienes cuenta en Platzi?", "AccountFooter-register": "Crear cuenta", "AccountFooter-login": "Inicia tu sesi\u00f3n", "AccountFooter-title-login ": "\u00bfYa tienes una cuenta?", "RegisterButton-email": "Reg\u00edstrate con tu Email", "LoginSocial-twitter-register": "Reg\u00edstrate con Twitter", "LoginSocial-facebook-register": " Reg\u00edstrate con Facebook", "LoginSocial-google-register": " Reg\u00edstrate con Google", "planExpert": "Plan Expert", "planExpertText": "Desarrolla tus habilidades en programaci\u00f3n, dise\u00f1o, producci\u00f3n audiovisual, marketing y muchas m\u00e1s. Mide tu progreso y recibe certificados con tu nombre a finalizar cada curso.", "header.billing.text": "Ponte al d\u00eda con tus obligaciones tributarias actualizando la informaci\u00f3n para generar tu Factura Electr\u00f3nica de forma f\u00e1cil.", "header.billing.cta": "Completar Formulario", "referral.stickyCustomBanner.description": "{name} te da un mes adicional en tu plan anual Expert o Expert Duo. Suscr\u00edbete antes del {expirationDate} y <strong>obt\u00e9n un mes extra</strong> de cursos online efectivos.", "referral.stickyCustomBanner.cta": "Quiero mi plan + 1 mes extra", "referral.stickyCustomBanner.countdownTitle": "Tu regalo expira en", "individual_promo.stickyCustomBanner.description": "<strong>{name}, \u00a1bajamos los precios para ti!</strong><br/>Obt\u00e9n tu acceso ilimitado para aprender a precio especial, \u00a1desc\u00fabrelo!", "individual_promo.stickyCustomBanner.cta": "ver planes", "individual_promo.stickyCustomBanner.countdownTitle": "\ud83d\udd25 te quedan \ud83d\udd25"}, "locale": "es", "isHispanic": true, "country_name": "Per\u00fa", "country_flag": "https://static.platzi.com/media/flags/PE.png", "options": [{"title": "Preguntas frecuentes", "url": "/faq/"}, {"title": "Cont\u00e1ctanos", "url": "/contacto/"}, {"title": "Prensa", "url": "/prensa/"}, {"title": "Conferencias", "url": "/conf/todas/"}, {"title": "T\u00e9rminos y Condiciones", "url": "/terminos/"}, {"title": "Privacidad", "url": "/privacidad/"}, {"title": "Estudiantes", "url": "/historias/"}, {"title": "Hola", "url": "/hola/"}, {"title": "Trabaja con nosotros", "url": "/unete/careers/"}], "socials": [{"icon": "icon-twt", "url": "https://twitter.com/platzi"}, {"icon": "icon-youtube-play", "url": "https://www.youtube.com/channel/UC55-mxUj5Nj3niXFReG44OQ"}, {"icon": "icon-fcbk", "url": "https://facebook.com/platzi"}, {"icon": "icon-instagram", "url": "https://www.instagram.com/platzi/"}], "awards": [{"logo": "https://static.platzi.com/static/images/footer/yc.png", "name": "Y Combinator", "url": "https://platzi.com/blog/platzi-y-combinator/"}, {"logo": "https://static.platzi.com/static/images/footer/asugsv.png", "name": "ASU + GSV Summit", "url": "https://platzi.com/blog/platzi-gana-premio-educacion/"}], "languages": [{"url": "https://platzi.com.br", "lang_name": "Portugu\u00e9s", "lang": "pt", "flag": "https://static.platzi.com/static/images/flags/brazil.jpg"}, {"url": "https://platzi.com", "lang_name": "Espa\u00f1ol", "lang": "es", "flag": "https://static.platzi.com/static/images/flags/espana.jpg"}], "organization_id": 1, "categories": [{"color": "#FFBB00", "name": "Negocios y Emprendimiento", "url": "/categorias/negocios/"}, {"color": "#218371", "name": "Startups", "url": "/categorias/startups/"}, {"color": "#1476B8", "name": "Marketing", "url": "/categorias/marketing/"}, {"color": "#CE3B3E", "name": "Habilidades Blandas", "url": "/categorias/crecimiento-profesional/"}, {"color": "#81439D", "name": "Dise\u00f1o y UX", "url": "/categorias/diseno/"}, {"color": "#FF8D0A", "name": "Contenido Digital", "url": "/categorias/contenido-digital/"}, {"color": "#17871D", "name": "Desarrollo e Ingenier\u00eda", "url": "/categorias/desarrollo/"}, {"color": "#C92387", "name": "Ingl\u00e9s", "url": "/categorias/english/"}], "official_companies": [{"logo": "https://static.platzi.com/static/images/footer/logo-ibm.png", "name": "IBM", "url": ""}, {"logo": "https://static.platzi.com/static/images/footer/logo-unity.png", "name": "Unity", "url": ""}], "logo": "https://static.platzi.com/static/images/footer/logo.png", "ask_billing_data": false, "showInvitationModal": false, "showBeneficiaryBanner": false, "freshchat_enable": true, "headerNotification": {}, "platziDayIsGoingOn": false, "platziDayEnabled": false, "specialEventBanner": null, "enableReferrals": true};
+        var lang = "es";
+      </script><script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script><script defer async>
+          // display a warning in the console
+          
+            console.log('%cStop!', 'color: red;font-size:2.5rem;font-weight:bold;');
+            console.log('%cThis is a browser feature intended for developers. If someone told you to copy-paste something here to enable a Platzi feature or "hack" someone\'s account, it is a scam and will give them access to your Platzi account.', 'font-size:1.25rem;line-height:1.1;margin-top:.5em');
+          
+        </script></head><body><div id="contact-us-modal"></div><header class="Header" id="header"><div class="Header-container u-wrapper u-clearfix"><div class="Header-menuContainer"><a href="/" title="Platzi.com" class="Header-logo"><img src="https://static.platzi.com/static/images/logos/platzi.png" srcset="https://static.platzi.com/static/images/logos/platzi.png 1x, https://static.platzi.com/static/images/logos/platzi@2x.png 2x" alt="Platzi.com" width="85" height="27"></a></div></div></header><div class="LoginView"><div id="login-v2"><div class="ResetConfirm" data-reactroot="" data-reactid="1" data-react-checksum="-1532112233"><div class="ResetConfirm-container" data-reactid="2"><div class="ResetConfirmForm" data-reactid="3"><div class="ResetConfirmForm-title" data-reactid="4"><h2 data-reactid="5"><span data-reactid="6">Restablece tu contraseña</span></h2><span data-reactid="7">El link es invalido, probablemente porque ya fue usado, por favor haz un nuevo cambio de password</span><div class="ResetConfirmForm-return" data-reactid="8"><a href="/login/" data-reactid="9"><span data-reactid="10">&lt; Regresar a inicio de sesión</span></a></div></div></div></div></div></div></div><script type="text/javascript">WebFontConfig={google:{families:['Lato:300,400,700:latin']}};(function(){var wf=document.createElement('script');wf.src=('https:'==document.location.protocol?'https':'http')+'://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';wf.type='text/javascript';wf.async='true';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(wf,s);})();</script><script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=263680607075199&version=v2.0";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script><script type="text/javascript">
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js?onload=OnLoadCallback';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script><script>window.twttr = (function (d, s, id) {
+      var t, js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src= "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+      return window.twttr || (t = { _e: [], ready: function (f) { t._e.push(f); } });
+    }(document, "script", "twitter-wjs"));</script><noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-KSZ9RW"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-KSZ9RW');</script><script src="//platform.twitter.com/oct.js" type="text/javascript" async></script><script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js" async></script><script>
+          var visits = parseInt(window.localStorage.getItem('visits-counter'), 10) || 0;
+          if (visits < 35) {
+            window.localStorage.setItem('visits-counter', visits + 1)
+          }
+          if (visits === 10 || visits === 20 || visits === 30) {
+            window.openContact = true;
+          }
+        </script><script>
+          window.contactInfo = {
+            hasSubscription: false,
+            isAuthenticated: false,
+            country: "peru",
+            flag: "https://static.platzi.com/static/images/languajes/Peru.jpg",
+            isOrganizer: false,
+            lang: "es",
+            i18n: {'contactus_title': '¿Tienes dudas o quieres comunicarte con nosotros?', 'contactus_subtitle': 'Elige el medio que más te convenga, te sugerimos ', 'write': 'Escríbenos', 'dm': 'Mensaje Directo', 'telephone': 'Teléfono', 'acceptTerms': 'Nunca pares de aprender sobre la seguridad de tus datos', 'agree': 'Aquí puedes ver nuestros {terms} y actualizaciones de nuestras {privacy}', 'terms': 'Términos de Uso', 'privacy': 'políticas de privacidad', 'accept': 'Términos de Uso', 'planExpert': 'Plan Expert', 'planExpertText': 'Desarrolla tus habilidades en programación, diseño, producción audiovisual, marketing y muchas más. Mide tu progreso y recibe certificados con tu nombre a finalizar cada curso.'},
+            enabled: true,
+            accepted_gdpr: false,
+            userId: '0',
+            organizationId: '1',
+            faq: [{'title': '¿Cómo funcionan los cursos? ¿Debo seguir un horario?', 'cta': 'https://platzi.com/faq/#como-funcionan-cursos'}, {'title': '¿Qué necesito para tomar los cursos?', 'cta': 'https://platzi.com/faq/#que-necesito'}, {'title': '¿Qué planes tienen disponibles para mi?', 'cta': 'https://platzi.com/faq/#Planes'}, {'title': '¿Qué medios de pago aceptan?', 'cta': 'https://platzi.com/faq/#medios-pago'}, {'title': 'Quiero contactar directamente a Platzi', 'cta': 'https://platzi.com/faq/#contactos'}, {'title': 'Contactarme por mail', 'cta': 'mailto:team@platzi.com'}],
+            faq_title: '¿Tienes alguna duda o quieres comunicarte con nosotros?',
+          }
+          window.isHispanic = true
+        </script><script type="text/javascript" src="https://static.platzi.com/static/js/dll/modules.d1f4a8fde9c861df4e1e.js.gz"></script><script>
+    window.login = {"loginUrl": "/login/?next=", "next": "/home", "registerUrl": "/onboarding/", "resetPassword": "/password/reset/", "emailError": "", "passwordError": "", "nonFieldsError": "", "csrf": "PgXSWPItNU6JNNHiTtoCHzBdW6dVIGqeY9Il9K3jN2D16TUzabj0smezSult9Arv", "locale": "es", "i18n": {"LoginSocial-facebook-login": "Iniciar sesi\u00f3n con Facebook", "LoginSocial-twitter-login": "Iniciar sesi\u00f3n con Twitter", "LoginSocial-google-login": "Iniciar sesi\u00f3n con Google", "login_email": "Tu email", "login_password": "Tu contrase\u00f1a", "LoginWithEmail-login": "Iniciar sesi\u00f3n", "LoginWithEmail-lostpassword": "\u00bfOlvidaste tu contrase\u00f1a?", "AccountFooter-title-register": "\u00bfA\u00fan no tienes cuenta en Platzi?", "AccountFooter-register": "Crear cuenta", "AccountFooter-login": "Inicia tu sesi\u00f3n", "AccountFooter-title-login": "\u00bfYa tienes una cuenta?", "RegisterButton-email": "Reg\u00edstrate con tu Email", "LoginSocial-twitter-register": "Reg\u00edstrate con Twitter", "LoginSocial-facebook-register": " Reg\u00edstrate con Facebook", "LoginSocial-google-register": " Reg\u00edstrate con Google", "register_name": "Nombre completo", "register_email": "Correo electr\u00f3nico", "register_password1": "Crea tu contrase\u00f1a", "register_password2": "Confirma tu contrase\u00f1a", "register_username": "Elige tu nombre de usuario", "RegisterForm-terms": "Acepto <a href={terms} target=\"_blank\">T\u00e9rminos de Servicio</a> y <a href={privacy} target=\"_blank\">Pol\u00edtica de Privacidad", "RegisterForm-create": "Crear mi cuenta", "thanks_register": "\u00a1Gracias por ser parte de Platzi!", "payment_success": "Tu transacci\u00f3n ha sido <strong>EXITOSA</strong>", "create_account_thanks": "Crea tu cuenta para empezar a estudiar", "select_plan": "Selecciona alguna opci\u00f3n", "your_info": "Ingresa tus datos", "confirm_payment": "Confirma tu pago", "RegisterText-copy": "Reg\u00edstrate con <a href=\"/login/facebook/{nextUrl}\">Facebook</a> o <a href=\"/login/twitter/{nextUrl}\">Twitter</a>", "login_or": "o", "login.notificationBanner.emailVerified": "Gracias por confirmar tu correo"}, "companyData": null, "showSocialLogin": true, "socialServiceStatus": {}}
+    window.organization = '1';
+  </script><script type="text/javascript" src="https://static.platzi.com/static/js/core/login-v2.5038f7626025b0742b19.js.gz"></script><script type="text/javascript" src="https://static.platzi.com/static/js/core/header-v2.5038f7626025b0742b19.js.gz"></script><script type="text/javascript" src="https://static.platzi.com/static/js/d/contact-modal.00cad76e508f4e9b9927.js.gz"></script><script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "Organization",
+          "name": "Platzi",
+          "url": "https://platzi.com/",
+          "description": "Aprende de expertos en programación, diseño, marketing, startups, video y web. Suscríbete hoy.",
+          "foundingDate": "2013-01-01",
+          "founders": [
+            {
+              "@type": "Person",
+              "name": "John Freddy Vega"
+            },
+            {
+              "@type": "Person",
+              "name": "Christian Van Der Henst"
+            }
+          ],
+          "sameAs": [
+            "https://www.facebook.com/platzi/",
+            "https://twitter.com/Platzi",
+            "https://www.youtube.com/channel/UC55-mxUj5Nj3niXFReG44OQ",
+            "https://www.linkedin.com/school/2822346"
+          ]
+        }
+      </script><script src="https://wchat.freshchat.com/js/widget.js"></script><script>
+          window.fcWidget.init({
+              "config": {
+                "headerProperty": {
+                  "foregroundColor": '#7F2C98',
+                  "hideChatButton": false,
+                },
+              },
+              token: "9f040694-40f6-4508-bbbf-153314894548",
+              host: "https://wchat.freshchat.com"
+          });
+        </script><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MPT6TFW"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript></body></html>

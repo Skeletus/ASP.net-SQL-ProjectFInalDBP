@@ -1,0 +1,42 @@
+﻿@model IEnumerable<MyLastBreath.Models.Cursousuario>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdcursoxNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdusuarioxNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdcursoxNavigation.Idcurso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdusuarioxNavigation.Iduser)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Idregistro">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Idregistro">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Idregistro">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

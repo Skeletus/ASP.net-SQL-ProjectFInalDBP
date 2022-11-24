@@ -1,0 +1,75 @@
+﻿@model IEnumerable<MyLastBreath.Models.Curso>
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<body>
+    <h1>
+        NUESTROS CURSOS
+    </h1>         
+    <!--Buscador Simple-->
+    <h2>
+        buscador
+        <input class="form-control" type="text" id="myInput" placeholder="buscando" />
+    </h2>
+    <table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Idcurso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreCurso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProfesorAsignadoNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DisponibilidadNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DificultadNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Idcurso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreCurso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProfesorAsignadoNavigation.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisponibilidadNavigation.Estado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DificultadNavigation.Nivel)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Idcurso">Detalles</a> |
+                <a asp-action="BuscarVista" asp-route-id="@item.Idcurso">Ver mas</a> |
+                <a asp-action="Inscribir">Inscribirse</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+<script>
+    $(document).ready(function () {
+        $("#myInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>

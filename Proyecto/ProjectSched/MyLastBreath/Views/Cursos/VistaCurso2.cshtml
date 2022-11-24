@@ -1,0 +1,189 @@
+﻿@{
+   Layout = null;
+
+
+    <script src="https://kit.fontawesome.com/9cc3b5bfbe.js"
+            crossorigin="anonymous">
+    </script>
+
+    <!-- boostrap para boton dark mode-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+
+    <!-- script para menu1-->
+    <script defer src="~/js/scriptCurso.js"></script>
+    <!-- css para menu 1-->
+    <link rel="stylesheet" href="~/css/estiloCurso.css"/>
+
+    <!-- area de trabajo para la pagina web-->
+
+    <div class="wrapper hover_collapse">
+        <!-- barra de navegacion-->
+        <div class="top_navbar">
+            <!-- parte izquierda superior-->
+            <div class="logo">
+                SCHED
+            </div>
+            <div class="menu">
+                <!-- icono de menu de tres barras-->
+                <div class="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <!-- icono de perfil-->
+                <div class="profile_wrap">
+                    <div class="profile">
+                        <!-- Perfil-->
+                        <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="profile_pic">
+                        <!-- mostrar nombre de usuario -->
+                        <span class="name">Usuario</span>
+                        <span class="icon">
+                            <i class="fas fa-angle-down"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Barra a desplegable a la derecha-->
+        <div class="sidebar">
+            <div class="sidebar_inner">
+                <ul>
+                    <!-- INICIO -->
+                    <li>
+                        <a asp-controller="Home" asp-action="Index">
+                            <span class="icon"><i class="bi bi-house"></i></span>
+                            <span class="text">Inicio</span>
+                        </a>
+                    </li>
+                    <!-- BUSQUEDA -->
+                    <li>
+                        <a asp-controller="Cursos" asp-action="ListadoCursos">
+                            <span class="icon"><i class="bi bi-search"></i></span>
+                            <span class="text">Busqueda</span>
+                        </a>
+                    </li>
+                    <!-- HORARIO *********AGREGAR/ENLAZAR-->
+                    <li>
+                        <a asp-controller="Cursousuarios" asp-action="UserCursosPage">
+                            <span class="icon"><i class="bi bi-calendar4"></i></span>
+                            <span class="text">Horario</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="slider-container">
+            <div class="slider">
+              <div class="slides">
+                <!-- 1 slide-->
+                <div id="slides__1" class="slide">
+                  <span class="slide__text">
+                    <img src="https://i0.wp.com/mediatraining.pe/wp-content/uploads/que-es-media-training-1.jpg?resize=1080%2C628&ssl=1" alt="..." width="650" height="397">
+                  </span>
+                  <a class="slide__prev" href="#slides__4" title="Next"></a>
+                  <a class="slide__next" href="#slides__2" title="Next"></a>
+                </div>
+                <!-- 2 slide -->
+                <div id="slides__2" class="slide">
+                  <span class="slide__text">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhGE_B3SHNJdPh8KwKyPXI_v6HzbXZJdHPFUA_992kWImRWriwTg1py-TSEwGefL13bWM&usqp=CAU"  alt="..." width="600" height="397">
+                  </span>
+                  <a class="slide__prev" href="#slides__1" title="Prev"></a>
+                  <a class="slide__next" href="#slides__3" title="Next"></a>
+                </div>
+                <!-- 3 slide -->
+                <div id="slides__3" class="slide">
+                  <span class="slide__text">
+                    <img src="https://www.paraderodigital.pe/wp-content/uploads/2022/03/curso-de-excel-presencial-y-online.png" alt="..." width="600" height="397">
+                  </span>
+                  <a class="slide__prev" href="#slides__2" title="Prev"></a>
+                  <a class="slide__next" href="#slides__4" title="Next"></a>
+                </div>
+              </div>
+              <!-- rectangulo para colocar los botones -->
+              <div class="slider__nav">
+                <a class="slider__navlink" href="#slides__1"></a><!-- circle 1-->
+                <a class="slider__navlink" href="#slides__2"></a><!-- circle 2-->
+                <a class="slider__navlink" href="#slides__3"></a><!-- circle 3-->
+              </div>
+            </div>
+          </div>
+        <!-- informacion dekl curso-->
+        <!--Texto Superior Principal -->
+        <div class="infcurso">
+            Personal Media Training
+        </div>
+
+        <!--ESTRELLAS DE CALIFICACION -->
+        <div class="imgpunt">
+            <img class="imgpuntuacion" src="https://www.pngmart.com/files/7/Rating-Star-PNG-Clipart.png" />
+        </div>
+        <!-- subtitulo -->
+        <div class="detcurso">
+            Detalles del Curso <br>
+        </div>
+        <!-- descripcion breve -->
+        <div class="texto">
+            En este curso recibirás una formación personalizada, asesoramiento y comentarios. Esta es una oportunidad de obtener asesoramiento experto de uno de los verdaderos maestros de la capacitación en medios, la comunicación de crisis y la gestión de la reputación. Este curso es lo más parecido a un taller de capacitación en persona, solo que mucho menos costoso.
+        </div>
+
+
+        <!--BOTON INSCRIBIRSE  CURSO-->
+        <div class="botonComprar">
+            <!--ENLAZAR A CALENDARIO-->
+            <a asp-controller="Cursos" asp-action="Inscribir" class="ml-2">
+                <button class="btn" type="button">Inscribirse Curso</button>
+            </a>
+
+        </div>
+
+        <!--CURSOS SIMILARES-->
+
+        <div class="simcursos">
+            CURSOS SIMILARES
+        </div>
+    
+        <!-- imagen del curso 1  -->
+        <div class="simcurso1">
+            @{
+                <a asp-action="VistaCurso1"> 
+                    <img class="curso1" src="https://static.mercadonegro.pe/wp-content/uploads/2019/04/22193459/cursos-online-gratuitos-excel.jpg" />
+                </a>
+            } 
+        </div>
+        <!-- texto de la derecha de la imagen 1 -->
+        <div class="detcurso1">
+            Curso Excel:<br>
+            Fórmulas y tablas
+        </div>
+
+        <!-- imagen del curso 2  -->
+        <div class="simcurso2">
+            @{
+                <a asp-action="VistaCurso3"> 
+                    <img class="curso2" src="https://www.ed2go.com/common/images/1/18597.jpg" />
+                </a>
+            }    
+        </div>
+        <!-- texto de la derecha de la imagen 2 -->
+        <div class="detcurso2">
+            SQL desde cero:<br>
+            <span style="font-size: 25px;color: rgb(74, 144, 201);text-transform: lowercase;letter-spacing: 2px;">Curso práctico</span>
+        </div>
+
+        <!-- imagen del curso 3  -->
+        <div class="simcurso3">
+            @{
+                <a asp-action="VistaCurso4"> 
+                    <img class="curso7" src="https://de10.com.mx/sites/default/files/styles/detalle_nota_1080x666_v22/public/2022/03/13/expo_reposteria_pan_2022.jpg?itok=mLHx5pbM" />
+                </a>
+            }
+        </div>
+        <!-- texto de la derecha de la imagen 3 -->
+        <div class="detcurso3">
+            Reposteria para <br>
+            principiantes
+        </div>
+    </div>
+}

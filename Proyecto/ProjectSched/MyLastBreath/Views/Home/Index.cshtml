@@ -1,0 +1,226 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<!-- scripts y css para la main page -->
+    <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
+    <link rel="shortcut icon" href="~/imagenes/icono.png" type="image/x-icon">  
+    <link rel="stylesheet" href="~/css/estilosHome.css">
+<body>
+
+    <header>
+        <section class="textos-header">
+            <h1><b>SCHED</b></h1>
+            <h2><b> Crea y organiza tus horarios </b></h2>
+        </section>
+        <div style="height: 225px; overflow: hidden;" ><svg viewBox="0 0 400 150" preserveAspectRatio="none" style="height: 100%; width: 100%;"><path d="M0.00,49.98 C149.99,150.00 349.20,-49.98 500.00,49.98 L500.00,150.00 L0.00,150.00 Z" style="stroke: none; fill: #fff;"></path></svg></div>   
+    </header>
+
+    <main>
+        <section>
+
+    <!--CARUSEL *FALTA AGREGAR TIMER*-->
+      <div class="slider-container"> 
+    <!--Reposteria para principiantes-->
+      <img
+        class="slider-item"
+        src="https://de10.com.mx/sites/default/files/styles/detalle_nota_1080x666_v22/public/2022/03/13/expo_reposteria_pan_2022.jpg?itok=mLHx5pbM"
+      /> 
+    <!--Personal Media Training-->
+      <img
+        class="slider-item"
+        src="https://i0.wp.com/mediatraining.pe/wp-content/uploads/que-es-media-training-1.jpg?resize=1080%2C628&ssl=1"
+      />
+    <!--SQL desde cero-->
+      <img
+        class="slider-item"
+        src="https://www.ed2go.com/common/images/1/18597.jpg"
+      />
+    <!--Curso Excel-->
+      <img
+        class="slider-item"
+        src="https://static.mercadonegro.pe/wp-content/uploads/2019/04/22193459/cursos-online-gratuitos-excel.jpg"
+      />
+    <!--Especilización en Gestion de Procesos-->
+      <img
+        class="slider-item"
+        src="https://www.ituser.es/files/202005/digitalizacion-proceso-clave-pymes.jpg"
+      />
+    <!--Comunicación Efectiva y Acertiva-->
+      <img
+        class="slider-item"
+        src="https://exclusivadigital.com.sv/wp-content/uploads/2021/01/comunicacion-asertiva-psicologia-sevilla.jpg"
+      />
+
+    </div>  
+        </section>
+
+<!--PARTE CURSOS NUEVOS// NUESTROS CURSOS-->
+        <section class="cursos-nuevos">
+            <div id="NewCursos" class="contenedor">
+
+                <h2 class="titulo"><b>NUESTROS CURSOS</b></h2>
+                <div class="galeria-port">
+                    
+                 <!--Clasificación de los cursos // bdcursos - clasifiacion_data-->
+                 <!--IDIOMAS-->
+                    <div class="imagen-port">
+                        <img src="https://i0.wp.com/www.france-travel-info.com/wp-content/uploads/2018/05/favorite-french-books-1-600x405.jpeg?resize=514%2C347" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">        
+                            <p>Idiomas</p>
+                        </div>
+                    </div>
+                <!--INFORMATICA -->
+                    <div class="imagen-port">
+                        <img src="https://i.pinimg.com/originals/d5/fb/05/d5fb05c883d32f1f4baa9bc0c41f3424.png" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">      
+                            <p>Informatica </p>
+                        </div>
+                    </div>
+
+                <!--PSICOLOGIA -->
+                    <div class="imagen-port">
+                        <img src="https://www.cientifica.edu.pe/sites/default/files/2019-11/psicologia-4.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">      
+                            <p>Psicologia</p>
+                        </div>
+                    </div>
+
+                <!--GESTION EMPRESARIAL-->
+                    <div class="imagen-port">
+                        <img src="https://hablemosdeempresas.com/wp-content/uploads/sites/2/2021/02/analizar-competencia-excel-1100x795.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">      
+                            <p>Gestion Empresarial</p>
+                        </div>
+                    </div>
+                <!--LITERATURA-->
+                    <div class="imagen-port">
+                        <img src="https://www.insidehighered.com/sites/default/server_files/media/iStock-910852368.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">       
+                            <p>Literatura</p>
+                        </div>
+                    </div>
+                <!--Finanzas y Economia-->
+                    <div class="imagen-port">
+                        <img src="https://inteligenciafinancieragsp.com/wp-content/uploads/2021/06/finanzas-blog-1-gsp.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">        
+                            <p>Finanzas y Economia</p>
+                        </div>
+                    </div>
+                <!--Ofimatica-->
+                    <div class="imagen-port">
+                        <img src="https://i0.wp.com/ensedeciencia.com/wp-content/uploads/2022/01/suite-ofimatica.webp?ssl=1" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">       
+                            <p>Ofimatica</p>
+                        </div>
+                    </div>
+                <!--Todos-->
+                    <div class="imagen-port">
+                        <img src="https://www.paho.org/sites/default/files/styles/max_1500x1500/public/2022-04/online-learning.jpg?itok=r_uEtKaZ" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">    
+                            <!--<p>Todos</p>-->
+                            @{<a asp-area=""  asp-controller="Cursos" asp-action="ListadoCursos">Todos los Cursos</a>}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    <!--PARTE CURSOS MÁS VENDIDOS / / RECOMENDADOS **-->
+        <section class="cursos-mas-commprado">
+            <div id="SellCursos" class="contenedor">
+                <h2 class="titulo"><b>CURSOS RECOMENDADOS</b></h2>
+                <div class="galeria-port2">
+        <!--CURSOS CON MEJOR CALIFICACION-->
+        <!--CURSO EXCEL: FORMULAS Y TABLAS-->
+                    <div class="imagen-port2">
+                        <img src="https://static.mercadonegro.pe/wp-content/uploads/2019/04/22193459/cursos-online-gratuitos-excel.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">        
+                            <p>Curso Excel</p>
+                        </div>
+                    </div>
+        <!--DESARROLLO DE DISEÑO WEB-->
+                    <div class="imagen-port2">
+                        <img src="https://www.senati.edu.pe/sites/default/files/2017/carrera/09/diseno-y-desarrollo-web-senati-1800-x-1190.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">        
+                            <p>Desarrollo de Diseño Web</p>
+                        </div>
+                    </div>
+    <!--PRIMEROS AUXILIOS-->
+                    <div class="imagen-port2">
+                        <img src="https://noticias-pe.laiglesiadejesucristo.org/media/640x480/DM-Primeros-Auxilios-0.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">         
+                            <p>Primeros Auxilios</p>
+                        </div>
+                    </div>
+        <!--GEOMETRIA ANALITICA-->
+                    <div class="imagen-port2">
+                        <img src="https://concepto.de/wp-content/uploads/2019/09/geometria-analitica-ciencia-matematica-e1569006494121-800x400.jpg" alt="">
+                        <div class="hover-galeria">
+                            <img src="~/imagenes/click1.jpg" atl="">        
+                            <p>Geometria Analitica</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!--DATOS SOBRE NOSOTROS-->
+        <section class="sobre-nosotros">
+            <div id="DatosPag" class="contenedor">
+                <h2 class="titulo">SOBRE LA PÁGINA</h2>
+                <div class="servicio-conte">
+        <!--OBJETIVOS-->
+                    <div class="servicio-ind">
+                        <img src="~/imagenes/objetivos.png" alt="">
+                        <h3>Objetivos</h3>
+                        <p>"Brindar una página que le permita a las personas mantener un horario ordenado de los cursos que quiera aprender. "</p>
+                    </div>
+
+        <!--VISION-->
+                    <div class="servicio-ind">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTltG3w4JLjXHOlw6pLmuFolo9gceToq8-odfHq8oOMUUE5cNhedY8rFZ-EIiP4YNIftFE&usqp=CAU" alt="">
+                        <h3>Visión</h3>
+                        <p>"Ser una plataforma para las personas que quieran compartir y apredender, brindandoles un medio para expandir sus conocimientos."</p>
+                    </div>
+        <!--MISION-->
+                    <div class="servicio-ind">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5-bCe1S3pUkwYtRFqu2I-WlQeuGS79ZqyTeASxaVeG8_aeRwxBTWkjm5gUSRSNX8tU-A&usqp=CAU" alt="">
+                        <h3>Misión</h3>
+                        <p>“Mejorar la vida de las personas mediante el aprendizaje en línea, ofreciendo cursos gratuitos.”</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!--PARTE INFERIOR-->
+        <footer>
+            <div class="contenedor-footer">
+                <div class="content-foo">
+                    <h4>Phone</h4>
+                    <p>+51 992 356 789</p>
+                </div>
+                <div class="content-foo">
+                    <h4>Email</h4>
+                    <br><p>SCHED@google.com</p><
+                </div>
+                <div class="content-foo">
+                    <h4>Red Social</h4>
+                    <p> SCHED_cursos</p>
+                </div>
+            </div>
+            <h2 class="titulo-final">&copy; SCHED | Crea y Organiza tus horarios</h2>
+        </footer>
+    </main>
+</body>
